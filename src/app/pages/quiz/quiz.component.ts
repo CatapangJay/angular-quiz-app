@@ -84,7 +84,7 @@ export class QuizComponent implements OnInit {
   currentQ?: QuestionInfo;
   currentQidx: number = 0;
 
-  selectedChoice?: string;
+  selectedChoice?: number;
 
   constructor(private quizService: QuizService) {}
 
@@ -103,6 +103,7 @@ export class QuizComponent implements OnInit {
   goToNext() {
     if (this.currentQidx < this.totalQs) {
       this.currentQidx++;
+      this.setSelectedChoice();
       this.setCurrentQuestion();
     }
   }
@@ -114,9 +115,22 @@ export class QuizComponent implements OnInit {
     }
   }
 
+  setSelectedChoice() {
+    if (this.selectedChoice !== undefined)
+      this.currentQ!.answers[this.selectedChoice].selected = true;
+  }
+
   setCurrentQuestion() {
     this.currentQ = this.questions[this.currentQidx];
   }
 
-  showAnswer() {}
+  showAnswer() {
+    if (this.selectedChoice !== undefined) {
+      let selectedAnswer = this.currentQ!.answers[this.selectedChoice];
+    }
+    else{
+      
+    }
+    this.setSelectedChoice();
+  }
 }

@@ -9,4 +9,5 @@ export interface QuestionInfo {
 interface ChoiceInfo{
     text: string;
     correct: boolean;
+    selected: boolean;
 }
