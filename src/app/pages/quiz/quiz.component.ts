@@ -1,50 +1,125 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChildren } from '@angular/core';
 import { HeaderComponent } from '../../components/header/header.component';
 import { QuizService } from '../../service/quiz.service';
 import { QuestionInfo } from '../../models/question';
 import { FormsModule } from '@angular/forms';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'aqz-quiz',
+
   standalone: true,
+
   template: `
     <main class="h-screen flex flex-col">
       <aqz-header class="flex-none" />
+
+      @if (isFinished) {
+
+      <div class="flex-auto flex justify-center">
+        <div class="p-4 bg-white rounded-md items-center w-72 h-60 text-center">
+          <p class="text-xl font-bold">Results</p>
+
+          <span
+            class="text-3xl font-bold"
+            [ngClass]="isPassed ? 'text-emerald-600' : 'text-red-600'"
+            >{{ finalResult }}</span
+          >/{{ totalQs }}
+
+          <p>Thank you for taking the exam!</p>
+
+          <button
+            class="bg-amber-300 hover:bg-amber-400 text-white font-bold py-2 px-4 rounded"
+          >
+            Retake
+          </button>
+        </div>
+      </div>
+
+      } @else {
+
       <div class="flex-auto">
         <div class="flex p-5 gap-2">
           <div class="flex-1 p-4 bg-white rounded-md">
             <p class="text-xl font-bold mb-2">
               Question {{ currentQidx + 1 }}/50
             </p>
+
             <p>
               {{ currentQ?.text }}
             </p>
           </div>
+
           <div class="flex-1 p-4 bg-white rounded-md h-fit">
             <p class="text-xl font-bold mb-2">Choices</p>
+
             <ul>
               @for (choice of currentQ?.answers; track $index) {
+
               <li>
                 <input
+                  #radioInput
                   type="radio"
                   id="{{ $index }}"
                   name="choice"
                   value="{{ $index }}"
                   class="hidden peer"
                   [(ngModel)]="selectedChoice"
+                  [checked]="choice.selected"
+                  [disabled]="isShownAnswer"
                   required
                 />
+
+                <!-- <label
+
+                  for="{{ $index }}"
+
+                  class="inline-flex items-center justify-between w-full px-6 py-3 mb-2 text-gray-500 bg-white border border-gray-200 rounded-md cursor-pointer  peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 "
+
+                  [ngClass]="{
+
+                    'border-emerald-300': isShownAnswer && (selectedChoice === $index),
+
+                  'text-emerald-300': isShownAnswer && (selectedChoice === $index),'bg-emerald-100': isShownAnswer && (selectedChoice === $index)}">{{ choice.text }}</label
+
+                > -->
+
+                <!-- <label
+
+                  for="{{ $index }}"
+
+                  class="inline-flex items-center justify-between w-full px-6 py-3 mb-2 text-gray-500 bg-white border border-gray-200 rounded-md cursor-pointer  peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 "
+
+                  [ngClass]="{
+
+                    'border-emerald-300': isShownAnswer && choice.correct,
+
+                  'text-emerald-300': isShownAnswer,
+
+                  'bg-emerald-100': isShownAnswer}">{{ choice.text }}</label
+
+                > -->
+
                 <label
                   for="{{ $index }}"
-                  class="inline-flex items-center justify-between w-full px-6 py-3 mb-2 text-gray-500 bg-white border border-gray-200 rounded-md cursor-pointer  peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 "
+                  class="inline-flex items-center justify-between w-full px-6 py-3 mb-2 rounded-md peer-checked:border-blue-600 peer-checked:text-blue-600"
+                  [ngClass]="
+                    isShownAnswer && choice.correct
+                      ? 'disabled border-emerald-300 text-emerald-400 bg-emerald-100'
+                      : 'text-gray-500 bg-white border border-gray-200 hover:text-gray-600 hover:bg-gray-100 cursor-pointer'
+                  "
                   >{{ choice.text }}</label
                 >
               </li>
+
               }
             </ul>
           </div>
         </div>
       </div>
+
+      }
+
       <footer class="flex-none flex justify-between p-2 sticky">
         <div class="flex gap-2">
           <button
@@ -52,19 +127,28 @@ import { FormsModule } from '@angular/forms';
           >
             Mark
           </button>
+
           <button
             class="bg-cyan-300 hover:bg-cyan-400 text-white font-bold py-2 px-4 rounded"
+            (click)="showAnswer()"
           >
             Show Answer
           </button>
-        </div>
-        <div class="flex gap-2">
+
+          <button
+            class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded"
+            (click)="submit()"
+          >
+            SUBMIT
+          </button>
+
           <button
             class="bg-emerald-300 hover:bg-emerald-400 text-white font-bold py-2 px-4 w-28 rounded"
             (click)="goToPrev()"
           >
             Previous
           </button>
+
           <button
             class="bg-emerald-300 hover:bg-emerald-400 text-white font-bold py-2 px-4 w-28 rounded"
             (click)="goToNext()"
@@ -72,19 +156,50 @@ import { FormsModule } from '@angular/forms';
             Next
           </button>
         </div>
+
+        <div class="flex gap-2">
+          <!-- <button
+            class="bg-emerald-300 hover:bg-emerald-400 text-white font-bold py-2 px-4 w-28 rounded"
+            (click)="goToPrev()"
+          >
+            Previous
+          </button>
+
+          <button
+            class="bg-emerald-300 hover:bg-emerald-400 text-white font-bold py-2 px-4 w-28 rounded"
+            (click)="goToNext()"
+          >
+            Next
+          </button> -->
+        </div>
       </footer>
     </main>
   `,
-  imports: [HeaderComponent, FormsModule],
+
+  imports: [HeaderComponent, FormsModule, NgClass],
 })
 export class QuizComponent implements OnInit {
+  @ViewChildren('radioInput') radioInputs?: ElementRef[];
+
   questions: QuestionInfo[] = [];
+
   totalQs: number = 0;
 
   currentQ?: QuestionInfo;
+
   currentQidx: number = 0;
 
+  isShownAnswer: boolean = false;
+
   selectedChoice?: number;
+
+  radioValue: boolean = true;
+
+  isFinished: boolean = false;
+
+  finalResult: number = 0;
+
+  isPassed: boolean = false;
 
   constructor(private quizService: QuizService) {}
 
@@ -95,23 +210,50 @@ export class QuizComponent implements OnInit {
   initializeQuiz() {
     this.quizService.getQuestions().subscribe((q) => {
       this.questions = q;
+
       this.totalQs = q.length;
+
       this.setCurrentQuestion();
     });
   }
 
   goToNext() {
     if (this.currentQidx < this.totalQs) {
-      this.currentQidx++;
       this.setSelectedChoice();
+
+      this.setQuestionCorrect();
+
+      this.currentQidx++;
+
       this.setCurrentQuestion();
+
+      if (this.hasChecked()) {
+        this.resetChoices();
+      }
+
+      // this.checkTheCurrentSelected();a
+
+      this.isShownAnswer = false;
     }
   }
 
   goToPrev() {
     if (this.currentQidx > 0) {
+      this.setSelectedChoice();
+
       this.currentQidx--;
+
+      this.resetChoices();
+
       this.setCurrentQuestion();
+
+      this.isShownAnswer = false;
+    }
+  }
+
+  checkTheCurrentSelected() {
+    if (this.radioInputs !== undefined && this.selectedChoice !== undefined) {
+      this.radioInputs[this.selectedChoice].nativeElement.checked = true;
     }
   }
 
@@ -125,12 +267,61 @@ export class QuizComponent implements OnInit {
   }
 
   showAnswer() {
-    if (this.selectedChoice !== undefined) {
-      let selectedAnswer = this.currentQ!.answers[this.selectedChoice];
+    this.isShownAnswer = !this.isShownAnswer;
+
+    // this.selectedChoice = this.getCheckedChoiceIdx();
+
+    // if (this.selectedChoice !== undefined && this.selectedChoice > -1) {
+
+    //   let selectedAnswer = this.currentQ!.answers[this.selectedChoice];
+
+    // }
+
+    // else {
+
+    // }
+
+    if (this.isShownAnswer) {
+      this.setQuestionCorrect();
     }
-    else{
-      
+  }
+
+  private setQuestionCorrect() {
+    var choiceIdx = this.getCheckedChoice();
+
+    if (choiceIdx !== undefined) {
+      this.currentQ!.isCorrect =
+        this.currentQ!.answers[choiceIdx.nativeElement.id].correct;
     }
-    this.setSelectedChoice();
+  }
+
+  submit() {
+    this.finalResult = this.questions.filter((q) => q.isCorrect).length;
+
+    this.isPassed = (this.finalResult / this.totalQs) * 100 > 70;
+
+    this.isFinished = true;
+  }
+
+  resetChoices() {
+    this.radioInputs?.forEach((el) => {
+      el.nativeElement.checked = false;
+    });
+  }
+
+  hasChecked() {
+    return this.radioInputs?.some((el) => el.nativeElement.checked);
+  }
+
+  getCheckedChoice() {
+    return this.radioInputs?.find((el) => el.nativeElement.checked);
+  }
+
+  getCheckedChoiceIdx() {
+    return this.radioInputs?.findIndex((el) => el.nativeElement.checked);
+  }
+
+  getCorrectChoice() {
+    return this.radioInputs?.find((el) => el.nativeElement.checked);
   }
 }

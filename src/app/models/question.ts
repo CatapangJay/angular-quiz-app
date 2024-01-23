@@ -3,7 +3,8 @@ export interface QuestionInfo {
     type: string;
     text: string;
     randomiseAnswers: boolean;
-    answers: ChoiceInfo[]
+    answers: ChoiceInfo[];
+    isCorrect: boolean;
 }
 
 interface ChoiceInfo{
