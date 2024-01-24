@@ -16,8 +16,8 @@ import { NgClass } from '@angular/common';
 
       @if (isFinished) {
 
-      <div class="flex-auto flex justify-center">
-        <div class="p-4 bg-white rounded-md items-center w-72 h-60 text-center">
+      <div class="flex justify-center w-100">
+        <div class="p-4 bg-white rounded-md items-center m-8 text-center">
           <p class="text-xl font-bold">Results</p>
 
           <span
@@ -27,7 +27,24 @@ import { NgClass } from '@angular/common';
           >/{{ totalQs }}
 
           <p>Thank you for taking the exam!</p>
+          <p>Please review the wrong answers:</p>
 
+          @for (failedQ of failedQuestions; track $index) {
+          <div class="p-4 bg-white rounded-md items-center text-left">
+            <span class="text-xl font-bold">Question #{{ failedQ.id }}</span>
+            <p>{{ failedQ.text }}</p>
+            @for (choice of failedQ.answers; track $index) {
+            <div
+              [ngClass]="{
+                'bg-emerald-400': choice.correct,
+                'bg-red-400': choice.selected
+              }"
+            >
+              {{ choice.text }}
+            </div>
+            }
+          </div>
+          }
           <button
             class="bg-amber-300 hover:bg-amber-400 text-white font-bold py-2 px-4 rounded"
           >
@@ -42,7 +59,7 @@ import { NgClass } from '@angular/common';
         <div class="flex p-5 gap-2">
           <div class="flex-1 p-4 bg-white rounded-md">
             <p class="text-xl font-bold mb-2">
-              Question {{ currentQidx + 1 }}/50
+              Question {{ currentQidx + 1 }}/{{ totalQs }}
             </p>
 
             <p>
@@ -182,24 +199,19 @@ export class QuizComponent implements OnInit {
   @ViewChildren('radioInput') radioInputs?: ElementRef[];
 
   questions: QuestionInfo[] = [];
-
   totalQs: number = 0;
 
   currentQ?: QuestionInfo;
-
   currentQidx: number = 0;
 
   isShownAnswer: boolean = false;
-
   selectedChoice?: number;
 
-  radioValue: boolean = true;
-
   isFinished: boolean = false;
-
   finalResult: number = 0;
-
   isPassed: boolean = false;
+
+  failedQuestions: QuestionInfo[] = [];
 
   constructor(private quizService: QuizService) {}
 
@@ -290,13 +302,21 @@ export class QuizComponent implements OnInit {
     var choiceIdx = this.getCheckedChoice();
 
     if (choiceIdx !== undefined) {
-      this.currentQ!.isCorrect =
+      var isCorrect =
         this.currentQ!.answers[choiceIdx.nativeElement.id].correct;
+
+      this.currentQ!.isCorrect = isCorrect;
+
+      // if (!isCorrect) {
+      //   this.failedQuestions.push(this.currentQ!);
+      // }
     }
   }
 
   submit() {
     this.finalResult = this.questions.filter((q) => q.isCorrect).length;
+
+    this.failedQuestions = this.questions.filter((q) => !q.isCorrect);
 
     this.isPassed = (this.finalResult / this.totalQs) * 100 > 70;
 

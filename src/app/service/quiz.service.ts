@@ -10,6 +10,6 @@ export class QuizService {
   constructor(private http: HttpClient) { }
 
   public getQuestions(){
-    return this.http.get<QuestionInfo[]>('/assets/ace-2.json')
+    return this.http.get<QuestionInfo[]>('/assets/ace-3.json')
   }
 }
