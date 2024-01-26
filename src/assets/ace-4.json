@@ -750,7 +750,7 @@
   {
     "id": 182,
     "type": "SingleSelect",
-    "text": "Your company has developed a n What should you do?",
+    "text": "Your company has developed a new application that consists of multiple microservices. You want to deploy the application to Google Kubernetes Engine (GKE), and you want to ensure that the cluster can scale as more applications are deployed in the future. You want to avoid manual intervention when each new application is deployed. What should you do?",
     "randomiseAnswers": false,
     "answers": [
       {
@@ -763,7 +763,7 @@
       },
       {
         "text": "Create a GKE cluster with autoscaling enabled on the node pool. Set a minimum and maximum for the size of the node pool.",
-        "correct": false
+        "correct": true
       },
       {
         "text": "Create a separate node pool for each application, and deploy each application to its dedicated node pool.",
@@ -807,7 +807,7 @@
       },
       {
         "text": "Configure regional storage for the region closest to the users. Configure a Standard storage class.",
-        "correct": true
+        "correct": false
       },
       {
         "text": "Configure dual-regional storage for the dual region closest to the users. Configure a Nearline storage class.",
@@ -1027,11 +1027,11 @@
       },
       {
         "text": "Use Cloud Debugger to find out why the data was not refreshed correctly.",
-        "correct": true
+        "correct": false
       },
       {
         "text": "In Cloud Logging, create a filter for your Data Studio report.",
-        "correct": true
+        "correct": false
       }
     ]
   },
@@ -1119,7 +1119,7 @@
       },
       {
         "text": "1. Verify that you are assigned the Billing Administrator IAM role for your organization's Google Cloud account. 2. Create a new Google Cloud Project for the Marketing department. 3. Set the default key-value project labels to department:marketing for all services in this project.",
-        "correct": true
+        "correct": false
       },
       {
         "text": "1. Verify that you are assigned the Organization Administrator IAM role for your organization's Google Cloud account. 2. Create a new Google Cloud Project for the Marketing department. 3. Link the new project to a Marketing Billing Account.",
