@@ -131,7 +131,7 @@
       },
       {
         "text": "• Create network tags app-server and db-server.\r\n• Add the app-server tag to the application servers and the db-server tag to the database servers.\r\n• Create an egress firewall rule to allow network traffic from source network tag app-server to target network tag db-server.",
-        "correct": true
+        "correct": false
       },
       {
         "text": "• Create a service account sa-app and a network tag db-server.\r\n• Associate the service account sa-app with the application servers and the network tag db-server with the database servers.\r\n• Create an ingress firewall rule to allow network traffic from source VPC IP addresses and target the subnet-a IP addresses.",
@@ -543,7 +543,7 @@
       },
       {
         "text": "Turn on identity federation between Cloud Identity and Google Workspace. Enforce multi-factor authentication for domain wide delegation.",
-        "correct": true
+        "correct": false
       },
       {
         "text": "Use a third-party identity provider service through federation. Synchronize the users from Google Workplace to the third-party provider in real time.",
@@ -1135,7 +1135,7 @@
     "answers": [
       {
         "text": "Create an object lifecycle on the storage bucket to change the storage class to Archive Storage for objects with an age over 30 days.",
-        "correct": false
+        "correct": true
       },
       {
         "text": "Create a cron job in Cloud Scheduler to call a Cloud Functions instance every day to delete files older than 30 days.",
@@ -1219,7 +1219,7 @@
       },
       {
         "text": "Set the CLOUDSDK_PROXY_USERNAME and CLOUDSDK_PROXY_PASSWORD properties by using environment variables in your command line tool.",
-        "correct": false
+        "correct": true
       }
     ]
   },
@@ -1255,7 +1255,7 @@
     "answers": [
       {
         "text": "Deploy the application to Cloud Run. Use gradual rollouts for traffic splitting.",
-        "correct": false
+        "correct": true
       },
       {
         "text": "Deploy the application to Google Kubernetes Engine. Use Anthos Service Mash for traffic splitting.",
@@ -1307,7 +1307,7 @@
       },
       {
         "text": "Gradually roll out the new revision and split customer traffic between the revisions to allow rollback in case a problem occurs.",
-        "correct": false
+        "correct": true
       },
       {
         "text": "Send all customer traffic to the new revision, and roll back to a previous revision if you witness any problems in production.",
@@ -1387,7 +1387,7 @@
       },
       {
         "text": "Grant roles/bigquery.dataViewer role to crm-databases and appropriate roles to web-applications.",
-        "correct": false
+        "correct": true
       }
     ]
   },
@@ -1399,7 +1399,7 @@
     "answers": [
       {
         "text": "Modify the existing subnet range to 172.16.20.0/24.",
-        "correct": false
+        "correct": true
       },
       {
         "text": "Create a new Secondary IP Range in the VPC and configure the VMs to use that range.",
@@ -1490,23 +1490,23 @@
   {
     "id": 263,
     "type": "SingleSelect",
-    "text": "You are developing a new application. You want the application to be triggered only when a given file is updated in your Cloud Storage bucket. Your trigger might change, so your process must support different types of triggers. You want the configuration to be simple so that multiple team members can update the triggers in the future. What should you do?",
+    "text": "Your customer wants you to create a secure website with autoscaling based on the compute instance CPU load. You want to enhance performance by storing static content in Cloud Storage. Which resources are needed to distribute the user traffic?",
     "randomiseAnswers": false,
     "answers": [
       {
-        "text": "Configure Cloud Storage events to be sent to Pub/Sub, and use Pub/Sub events to trigger a Cloud Build job that executes your application.",
+        "text": "An external HTTP(S) load balancer with a managed SSL certificate to distribute the load and a URL map to target the requests for the static content to the Cloud Storage backend.",
+        "correct": true
+      },
+      {
+        "text": "An external network load balancer pointing to the backend instances to distribute the load evenly. The web servers will forward the request to the Cloud Storage as needed.",
         "correct": false
       },
       {
-        "text": "Create an Eventarc trigger that monitors your Cloud Storage bucket for a specific filename, and set the target as Cloud Run.",
+        "text": "An internal HTTP(S) load balancer together with Identity-Aware Proxy to allow only HTTPS traffic.",
         "correct": false
       },
       {
-        "text": "Configure a Cloud Function that executes your application and is triggered when an object is updated in Cloud Storage.",
-        "correct": false
-      },
-      {
-        "text": "Configure a Firebase function that executes your application and is triggered when an object is updated in Cloud Storage.",
+        "text": "An external HTTP(S) load balancer to distribute the load and a URL map to target the requests for the static content to the Cloud Storage backend. Install the HTTPS certificates on the instance.",
         "correct": false
       }
     ]
