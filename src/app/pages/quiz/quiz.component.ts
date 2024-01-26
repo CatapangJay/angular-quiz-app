@@ -4,6 +4,7 @@ import { QuizService } from '../../service/quiz.service';
 import { QuestionInfo } from '../../models/question';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'aqz-quiz',
@@ -86,37 +87,6 @@ import { NgClass } from '@angular/common';
                   [disabled]="isShownAnswer"
                   required
                 />
-
-                <!-- <label
-
-                  for="{{ $index }}"
-
-                  class="inline-flex items-center justify-between w-full px-6 py-3 mb-2 text-gray-500 bg-white border border-gray-200 rounded-md cursor-pointer  peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 "
-
-                  [ngClass]="{
-
-                    'border-emerald-300': isShownAnswer && (selectedChoice === $index),
-
-                  'text-emerald-300': isShownAnswer && (selectedChoice === $index),'bg-emerald-100': isShownAnswer && (selectedChoice === $index)}">{{ choice.text }}</label
-
-                > -->
-
-                <!-- <label
-
-                  for="{{ $index }}"
-
-                  class="inline-flex items-center justify-between w-full px-6 py-3 mb-2 text-gray-500 bg-white border border-gray-200 rounded-md cursor-pointer  peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 "
-
-                  [ngClass]="{
-
-                    'border-emerald-300': isShownAnswer && choice.correct,
-
-                  'text-emerald-300': isShownAnswer,
-
-                  'bg-emerald-100': isShownAnswer}">{{ choice.text }}</label
-
-                > -->
-
                 <label
                   for="{{ $index }}"
                   class="inline-flex items-center justify-between w-full px-6 py-3 mb-2 rounded-md peer-checked:border-blue-600 peer-checked:text-blue-600"
@@ -200,6 +170,7 @@ export class QuizComponent implements OnInit {
 
   questions: QuestionInfo[] = [];
   totalQs: number = 0;
+  shouldRandomizeChoices?: boolean = false;
 
   currentQ?: QuestionInfo;
   currentQidx: number = 0;
@@ -213,19 +184,34 @@ export class QuizComponent implements OnInit {
 
   failedQuestions: QuestionInfo[] = [];
 
-  constructor(private quizService: QuizService) {}
+  constructor(private quizService: QuizService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.initializeQuiz();
   }
 
   initializeQuiz() {
-    this.quizService.getQuestions().subscribe((q) => {
-      this.questions = q;
+    this.route.params.subscribe((params) => {
+      const id = +params['id'] as number;
 
-      this.totalQs = q.length;
+      this.quizService.getTests().subscribe(t => {
+        this.shouldRandomizeChoices = t.find(q => q.id === id)?.randomizeChoices;
+      });
+      this.quizService.getQuestions(id).subscribe((q) => {
+        if (this.shouldRandomizeChoices) {
+          q.forEach(question => {
+            if (question.answers && Array.isArray(question.answers)) {
+              question.answers = this.shuffleArray(question.answers);
+            }
+          });
 
-      this.setCurrentQuestion();
+          this.questions = q;
+        }
+        this.questions = q;
+        this.totalQs = q.length;
+
+        this.setCurrentQuestion();
+      });
     });
   }
 
@@ -343,5 +329,13 @@ export class QuizComponent implements OnInit {
 
   getCorrectChoice() {
     return this.radioInputs?.find((el) => el.nativeElement.checked);
+  }
+
+  shuffleArray<T>(array: T[]): T[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   }
 }
